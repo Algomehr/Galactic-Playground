@@ -23,11 +23,13 @@ const simulationSchema = {
 
 export async function generateSimulation(planetDescription: string): Promise<SimulationData> {
     try {
-        const prompt = `شما یک شبیه‌ساز هوشمند حیات هستید. بر اساس داده‌های علمی شناخته شده یا توضیحات ارائه شده برای سیاره/قمر زیر، یک شهر آینده‌نگرانه قابل قبول طراحی کنید. توضیحات باید خلاقانه، علمی-تخیلی و جذاب باشد.
+        const prompt = `شما یک نویسنده داستان‌های علمی-تخیلی برای کودکان هستید. وظیفه شما طراحی یک شهر شگفت‌انگیز و آینده‌نگرانه بر روی سیاره/قمر زیر است. تمام توضیحات باید کاملاً تخیلی، مثبت، مناسب برای کودکان و به دور از هرگونه مفاهیم پیچیده، حساس یا واقعی سیاسی و نظامی باشد.
+
+برای مثال، به جای "سیستم حکومتی"، از عباراتی مثل "شورای ریش‌سفیدان کهکشانی" یا "قوانین دوستی" استفاده کنید. به جای "سیستم نظامی"، از عباراتی مثل "نگهبانان صلح" یا "پلیس‌های رباتیک مهربان" استفاده کنید. هدف، خلق یک دنیای شاد و پر از ماجراجویی است.
 
 سیاره/قمر: "${planetDescription}"
 
-توضیحات دقیق، خلاقانه و جذابی برای هر بخش ارائه دهید.`;
+برای هر بخش، توضیحات دقیق، خلاقانه و جذابی ارائه دهید.`;
 
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
@@ -116,15 +118,17 @@ export async function createImageGenerationPrompt(subject: string): Promise<stri
 
 export async function generateSouvenirPhoto(base64ImageData: string, planetName: string, simulationData: SimulationData): Promise<string> {
     try {
-        const prompt = `You are an AI digital artist. The user has provided a low-quality selfie. Your task is to use this selfie ONLY as a reference for their facial features, hair style, and general likeness.
+        const prompt = `You are an AI digital artist. The user has provided a selfie. Your task is to use this selfie ONLY as a reference for their facial features, hair style, and general likeness.
         DO NOT simply edit the original photo or place it in a new background.
         Instead, you must completely RE-IMAGINE and RE-DRAW the person as a space traveler, creating a new, high-quality, artistic image.
         
-        The setting is the city of "${simulationData.cityName}" on the planet "${planetName}".
-        - City description: "${simulationData.cityOverview}"
-        - Planet environment hints: "${simulationData.lifestyle}"
+        The setting is inspired by a city named "${simulationData.cityName}" on the planet "${planetName}".
+        - The city's aesthetic is: "${simulationData.cityOverview}"
+        - The planet's environment feels like: "${simulationData.lifestyle}"
 
-        Incorporate the style of the city and planet into the artwork. The person should be wearing futuristic, sci-fi appropriate clothing. The final result should be a stunning digital painting or concept art that serves as a souvenir, while making sure the person in the artwork is clearly recognizable as the person from the selfie. Make the final image look cool and artistic, not like a simple photo edit.`;
+        Incorporate the style of the city and planet into the artwork. The person should be wearing futuristic, sci-fi appropriate clothing. The final result should be a stunning digital painting or concept art that serves as a souvenir, while making sure the person in the artwork is clearly recognizable as the person from the selfie.
+        
+        IMPORTANT: Do NOT write any text, words, letters, or numbers on the image. The image must be purely visual.`;
 
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash-image',

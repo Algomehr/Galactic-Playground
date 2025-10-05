@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { generateSouvenirPhoto } from '../services/geminiService';
 import type { Planet, SimulationData } from '../types';
@@ -8,6 +7,48 @@ interface SouvenirPhotoModalProps {
   simulationData: SimulationData;
   onClose: () => void;
 }
+
+const addWatermark = (base64Image: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        return reject(new Error('Could not get canvas context'));
+      }
+
+      // Draw the original image
+      ctx.drawImage(img, 0, 0);
+
+      // Add the watermark
+      const watermarkText = 'AdibAstroCenter';
+      const padding = 20;
+      // Responsive font size
+      const fontSize = Math.max(16, Math.min(img.width / 35, 32));
+      
+      ctx.font = `bold ${fontSize}px Vazirmatn, sans-serif`;
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'bottom';
+      
+      // Add a slight shadow for better readability
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+      ctx.shadowBlur = 5;
+
+      ctx.fillText(watermarkText, padding, canvas.height - padding);
+
+      resolve(canvas.toDataURL('image/jpeg'));
+    };
+    img.onerror = () => {
+      reject(new Error('Failed to load image for watermarking.'));
+    };
+    img.src = `data:image/jpeg;base64,${base64Image}`;
+  });
+};
+
 
 const SouvenirPhotoModal: React.FC<SouvenirPhotoModalProps> = ({ planet, simulationData, onClose }) => {
   const [step, setStep] = useState<'camera' | 'preview' | 'result'>('camera');
@@ -75,9 +116,11 @@ const SouvenirPhotoModal: React.FC<SouvenirPhotoModalProps> = ({ planet, simulat
       try {
           const base64Data = capturedImage.split(',')[1];
           const resultBase64 = await generateSouvenirPhoto(base64Data, planet.name, simulationData);
-          setEditedImage(`data:image/jpeg;base64,${resultBase64}`);
+          const watermarkedImage = await addWatermark(resultBase64);
+          setEditedImage(watermarkedImage);
           setStep('result');
       } catch (err) {
+          console.error(err);
           setError('اوه! دستگاه عکس جادویی کار نکرد. دوباره امتحان کن!');
       } finally {
           setIsLoading(false);
