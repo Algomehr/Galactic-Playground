@@ -5,49 +5,49 @@ export const PLANETS: Planet[] = [
   {
     name: 'مریخ',
     nameEn: 'Mars',
-    image: 'https://placehold.co/800x600/DD6B20/FFFFFF/png?text=مریخ+دوست+داشتنی',
+    image: 'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cmFkaWFsR3JhZGllbnQgaWQ9Im1hcnNHcmFkaWVudCIgY3g9IjUwJSIgY3k9IjUwJSIgcj0iNTAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjREQ2QjIwIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjQzUzMDMwIi8+PC9yYWRpYWxHcmFkaWVudD48L2RlZnM+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNDgiIGZpbGw9InVybCgjbWFyc0dyYWRpZW50KSIvPjxwYXRoIGQ9Ik0gMzAgMjAgQyA0MCA0MCwgNjAgNDAsIDcwIDIwIiBmaWxsPSIjQTA1MjJEIiBvcGFjaXR5PSIwLjQiIHN0cm9rZT0ibm9uZSIvPjxwYXRoIGQ9Ik0gMjUgNzAgUSA1MCA2MCwgNzUgNzUiIGZpbGw9IiNBMDUyMkQiIG9wYWNpdHk9IjAuMyIgc3Ryb2tlPSJub25lIi8+PGNpcmNsZSBjeD0iNTAiIGN5PSIxMCIgcj0iOCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9IjAuOCIvPjwvc3ZnPg==',
     description: 'همسایه قرمز ما! ربات‌ها روی آن مشغول ماجراجویی هستند.'
   },
   {
     name: 'اروپا',
     nameEn: 'Europa',
-    image: 'https://placehold.co/800x600/A0AEC0/FFFFFF/png?text=اروپای+یخی',
+    image: 'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cmFkaWFsR3JhZGllbnQgaWQ9ImV1cm9wYUdyYWRpZW50IiBjeD0iNTAlIiBjeT0iNTAlIiByPSI1MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNFQkY4RkYiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNBMDBBRUMwIi8+PC9yYWRpYWxHcmFkaWVudD48L2RlZnM+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNDgiIGZpbGw9InVybCgjZXVyb3BhR3JhZGllbnQpIi8+PHBhdGggZD0iTSAyMCAyMCBRIDUwIDYwLCAzMCA4MCIgc3Ryb2tlPSIjNzE4MDk2IiBzdHJva2Utd2lkdGg9IjEuNSIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0gODAgMTUgQyA2MCA0MCwgNzAgNzAsIDg1IDkwIiBzdHJva2U9IiM3MTgwOTYiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0gMTUgNTAgSCA4NSIgc3Ryb2tlPSIjNzE4MDk2IiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiLz48L3N2Zz4=',
     description: 'یک قمر یخی و درخشان که زیر پوسته‌اش یک اقیانوس بزرگ قایم کرده!'
   },
   {
     name: 'کپلر-186f',
     nameEn: 'Kepler-186f',
-    image: 'https://placehold.co/800x600/63B3ED/FFFFFF/png?text=کپلر',
+    image: 'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cmFkaWFsR3JhZGllbnQgaWQ9ImtlcGxlckdyYWRpZW50IiBjeD0iMzAlIiBjeT0iMzAlIiByPSI2MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM2M0IzRUQiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMzMTgyQ0UiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0OCIgZmlsbD0idXJsKCNrZXBsZXJHcmFkaWVudCkiLz48cGF0aCBkPSJNIDIwLDUwIGEgMjAsMjAgMCAxLDEgNDAsMCBhIDE1LDE1IDAgMSwwIC0xMCwtMTQiIGZpbGw9IiM0OEJCNzgiLz48cGF0aCBkPSJNIDcwLDcwIGEgMTAsMTAgMCAxLDEgMCwtMjAiIGZpbGw9IiMyRjg1NUEiLz48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0OCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9IjAuMSIvPjwvc3ZnPg==',
     description: 'یک سیاره دوردست که شاید یک زمین دوم برای ما باشد. چه شکلیه؟'
   },
   {
     name: 'زهره',
     nameEn: 'Venus',
-    image: 'https://placehold.co/800x600/F6E05E/FFFFFF/png?text=زهره+داغ',
+    image: 'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cmFkaWFsR3JhZGllbnQgaWQ9InZlbnVzR3JhZGllbnQiIGN4PSI1MCUiIGN5PSI1MCUiIHI9IjUwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI0Y2RTA1RSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI0Q2OUUyRSIvPjwvcmFkaWFsR3JhZGllbnQ+PC9kZWZzPjxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjQ4IiBmaWxsPSJ1cmwoI3ZlbnVzR3JhZGllbnQpIi8+PHBhdGggZD0iTSAxMCAzMCBDIDQwIDEwLCA2MCA1MCwgOTAgNDAiIHN0cm9rZT0iI0ZBRjA4OSIgc3Ryb2tlLXdpZHRoPSI1IiBmaWxsPSJub25lIiBvcGFjaXR5PSIwLjUiLz48cGF0aCBkPSJNIDE1IDcwIEMgNTAgOTAsIDcwIDYwLCA4NSA4MCIgc3Ryb2tlPSIjRkFGMDgzIiBzdHJva2Utd2lkdGg9IjQiIGZpbGw9Im5vbmUiIG9wYWNpdHk9IjAuNiIvPjwvc3ZnPg==',
     description: 'یک سیاره خیلی خیلی گرم با ابرهای زرد رنگ. مواظب باش نسوزی!'
   },
   {
     name: 'تایتان',
     nameEn: 'Titan',
-    image: 'https://placehold.co/800x600/E9D8FD/FFFFFF/png?text=تایتان+نارنجی',
+    image: 'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cmFkaWFsR3JhZGllbnQgaWQ9InRpdGFuR3JhZGllbnQiIGN4PSI1MCUiIGN5PSI1MCUiIHI9IjUwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI0Y2QUQ1NSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI0I3NzkxRiIvPjwvcmFkaWFsR3JhZGllbnQ+PGZpbHRlciBpZD0iYmx1ciI+PGZlR2F1c3NpYW5CbHVyIGluPSJTb3VyY2VHcmFwaGljIiBzdGREZXZpYXRpb249IjMiIC8+PC9maWx0ZXI+PC9kZWZzPjxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjQ4IiBmaWxsPSJ1cmwoI3RpdGFuR3JhZGllbnQpIi8+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNDgiIGZpbGw9InVybCgjdGl0YW5HcmFkaWVudCkiIGZpbHRlcj0idXJsKCNibHVyKSIvPjwvc3ZnPg==',
     description: 'بزرگترین قمر زحل با دریاچه‌هایی که به جای آب، چیز دیگری دارند!'
   },
   {
     name: 'انسلادوس',
     nameEn: 'Enceladus',
-    image: 'https://placehold.co/800x600/BEE3F8/FFFFFF/png?text=انسلادوس+برفی',
+    image: 'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cmFkaWFsR3JhZGllbnQgaWQ9ImVuY2VsYWR1c0dyYWRpZW50IiBjeD0iNTAlIiBjeT0iNTAlIiByPSI1MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGRkZGRkYiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNCRUUzRjgiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0OCIgZmlsbD0idXJsKCNlbmNlbGFkdXNHcmFkaWVudCkiLz48cGF0aCBkPSJNIDQ1IDk4IEMgNDAgMTEwLCA2MCAxMTAsIDU1IDk4IiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iMC44Ii8+PHBhdGggZD0iTSA1MCA5OCBDIDQ4IDEwNSwgNTIgMTA1LCA1MCA5OCIgZmlsbD0iI0VCRjhGRiIgb3BhY2l0eT0iMC45Ii8+PC9zdmc+',
     description: 'یک قمر کوچولوی برفی که از قطب جنوبش آبفشان‌های یخی بیرون می‌زند!'
   },
   {
     name: 'پروکسیما قنطورس بی',
     nameEn: 'Proxima Centauri b',
-    image: 'https://placehold.co/800x600/F56565/FFFFFF/png?text=پروکسیما',
+    image: 'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cmFkaWFsR3JhZGllbnQgaWQ9InByb3hpbWFHcmFkaWVudCIgY3g9IjIwJSIgY3k9IjUwJSIgcj0iNzAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjRjU2NTY1Ii8+PHN0b3Agb2Zmc2V0PSI2MCUiIHN0b3AtY29sb3I9IiM5QjJDMkMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMyRDM3NDgiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0OCIgZmlsbD0idXJsKCNwcm94aW1hR3JhZGllbnQpIi8+PC9zdmc+',
     description: 'نزدیک‌ترین سیاره خارج از منظومه شمسی به ما. شاید یک روز به آنجا سفر کنیم!'
   },
   {
     name: 'تراپیست-۱ای',
     nameEn: 'TRAPPIST-1e',
-    image: 'https://placehold.co/800x600/4FD1C5/FFFFFF/png?text=تراپیست',
+    image: 'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cmFkaWFsR3JhZGllbnQgaWQ9InRyYXBwaXN0R3JhZGllbnQiIGN4PSI1MCUiIGN5PSI1MCUiIHI9IjUwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzRGRDFCNSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzJDN0E3QiIvPjwvcmFkaWFsR3JhZGllbnQ+PC9kZWZzPjxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjQ4IiBmaWxsPSJ1cmwoI3RyYXBwaXN0R3JhZGllbnQpIi8+PHBhdGggZD0iTSAzMCwyMCBDIDUwLDEwIDcwLDMwIDgwLDUwIFMgNjAsOTAgNDAsODAgUyAxMCwzMCAzMCwyMCIgZmlsbD0iIzI4NUU2MSIgb3BhY2l0eT0iMC42Ii8+PHBhdGggZD0iTSAxNSw2MCBDIDI1LDUwIDM1LDU1IDQ1LDY1IFMgMzUsODUgMjUsODAgUyA1LDcwIDE1LDYwIiBmaWxsPSIjMzhCMkFDIiBvcGFjaXR5PSIwLjgiLz48L3N2Zz4=',
     description: 'سیاره‌ای هم‌اندازه زمین که هفت تا خواهر و برادر سنگی دیگر هم دارد!'
   }
 ];
