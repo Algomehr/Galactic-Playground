@@ -97,6 +97,9 @@ const MainView: React.FC<MainViewProps> = ({ activeTab, onTabChange, onSelectPla
             )}
         </div>
       </div>
+      <footer className="w-full text-center text-gray-400 mt-auto py-4 text-sm">
+        توسعه یافته توسط <a href="https://mehrdad.netlify.app/" target="_blank" rel="noopener noreferrer" className="text-yellow-400 hover:text-yellow-300 underline">مهرداد رجبی</a>
+      </footer>
     </div>
   );
 };
