@@ -1,7 +1,9 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import type { Planet, SimulationData, ChatRole } from '../types';
 import SouvenirPhotoModal from './SouvenirPhotoModal';
+import StoryModal from './StoryModal';
+import { generateAdventureStory, generateAudio } from '../services/geminiService';
+import { decode, decodeAudioData } from '../utils/audioUtils';
 
 interface SimulationViewProps {
   planet: Planet;
@@ -57,8 +59,96 @@ const ResidentModal: React.FC<{ onSelect: (role: ChatRole, persona: string) => v
 const SimulationView: React.FC<SimulationViewProps> = ({ planet, data, onStartChat, onBack }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSouvenirModalOpen, setIsSouvenirModalOpen] = useState(false);
+  const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
+  const [storyContent, setStoryContent] = useState<string | null>(null);
+  const [isStoryLoading, setIsStoryLoading] = useState(false);
+
+  const [welcomeAudio, setWelcomeAudio] = useState<string | null>(null);
+  const [isWelcomeAudioLoading, setIsWelcomeAudioLoading] = useState(true);
+  const [isWelcomeAudioPlaying, setIsWelcomeAudioPlaying] = useState(false);
+  const [welcomeAudioError, setWelcomeAudioError] = useState<string | null>(null);
+
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const audioSourceRef = useRef<AudioBufferSourceNode | null>(null);
+
   const cityImageUrl = `https://pollinations.ai/p/${encodeURIComponent(data.cityImagePrompt)}`;
+
+  useEffect(() => {
+    const fetchWelcomeAudio = async () => {
+      const firstSentence = data.lifestyle.split(/[.!?]/)[0];
+      const welcomeText = `سلام! به شهر ${data.cityName} در سیاره ${planet.name} خوش اومدی! اینجا ما ${firstSentence}. امیدوارم از ماجراجوییت لذت ببری!`;
+      
+      try {
+        const audio = await generateAudio(welcomeText);
+        setWelcomeAudio(audio);
+      } catch (error) {
+        console.error("Failed to generate welcome audio", error);
+        setWelcomeAudioError("پیام خوش‌آمدگویی آماده نشد.");
+      } finally {
+        setIsWelcomeAudioLoading(false);
+      }
+    };
+
+    fetchWelcomeAudio();
+
+    return () => {
+      audioSourceRef.current?.stop();
+      audioContextRef.current?.close().catch(console.error);
+    };
+  }, [planet, data]);
+
+  const handlePlayWelcomeAudio = async () => {
+    if (isWelcomeAudioPlaying) {
+      audioSourceRef.current?.stop();
+      setIsWelcomeAudioPlaying(false);
+      return;
+    }
+
+    if (!welcomeAudio) return;
+
+    try {
+      if (!audioContextRef.current || audioContextRef.current.state === 'closed') {
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
+      }
+      const audioContext = audioContextRef.current;
+      
+      const audioBuffer = await decodeAudioData(decode(welcomeAudio), audioContext, 24000, 1);
+      const source = audioContext.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(audioContext.destination);
+
+      source.onended = () => {
+          setIsWelcomeAudioPlaying(false);
+          audioSourceRef.current = null;
+      };
+      
+      source.start();
+      audioSourceRef.current = source;
+      setIsWelcomeAudioPlaying(true);
+
+    } catch (error) {
+        console.error("Error playing welcome audio:", error);
+        setWelcomeAudioError("مشکلی در پخش صدا پیش اومد.");
+    }
+  };
   
+  const handleGenerateStory = async () => {
+    setIsStoryLoading(true);
+    setStoryContent(null);
+    try {
+      const story = await generateAdventureStory(planet, data);
+      setStoryContent(story);
+      setIsStoryModalOpen(true);
+    } catch (error) {
+      console.error("Failed to generate story", error);
+      setStoryContent("اوه! مثل اینکه قلم جادویی من جوهرش تموم شده. بعدا دوباره امتحان کن!");
+      setIsStoryModalOpen(true);
+    } finally {
+      setIsStoryLoading(false);
+    }
+  };
+
+
   const icons = {
     lifestyle: <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" viewBox="0 0 20 20" fill="currentColor"><path d="M10 3.5a1.5 1.5 0 013 0V4a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a1 1 0 100 2h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 00-1-1v-.5a1.5 1.5 0 01-3 0V15a1 1 0 00-1 1H6a1 1 0 01-1-1v-3a1 1 0 011-1h1a1 1 0 100-2H6a1 1 0 01-1-1V6a1 1 0 011-1h3a1 1 0 001-1v-.5z" /></svg>,
     government: <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v1.046A4.993 4.993 0 0116.954 8H18a1 1 0 110 2h-1.046A4.993 4.993 0 0112 14.954V16a1 1 0 11-2 0v-1.046A4.993 4.993 0 015.046 10H4a1 1 0 110-2h1.046A4.993 4.993 0 0110 3.046V2a1 1 0 011.3-.954zM12 5v10a3 3 0 010-6v-1a1 1 0 011-1h1a1 1 0 100-2h-1a1 1 0 01-1-1z" clipRule="evenodd" /></svg>,
@@ -70,6 +160,8 @@ const SimulationView: React.FC<SimulationViewProps> = ({ planet, data, onStartCh
     <div className="min-h-screen bg-gray-900 p-4 sm:p-8">
        {isModalOpen && <ResidentModal onSelect={(role, persona) => { onStartChat(role, persona); setIsModalOpen(false); }} onClose={() => setIsModalOpen(false)} />}
        {isSouvenirModalOpen && <SouvenirPhotoModal planet={planet} simulationData={data} onClose={() => setIsSouvenirModalOpen(false)} />}
+       {isStoryModalOpen && storyContent && <StoryModal planetName={planet.name} story={storyContent} onClose={() => setIsStoryModalOpen(false)} />}
+
       <div className="max-w-7xl mx-auto">
         <button onClick={onBack} className="mb-6 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-full transition-colors duration-200">
           &rarr; انتخاب یک سیاره دیگر
@@ -79,6 +171,31 @@ const SimulationView: React.FC<SimulationViewProps> = ({ planet, data, onStartCh
             {data.cityName}
           </h1>
           <p className="text-2xl text-gray-300 mt-2 font-display">شهری در سیاره {planet.name}</p>
+          <div className="mt-4">
+            <button
+              onClick={handlePlayWelcomeAudio}
+              disabled={isWelcomeAudioLoading || !!welcomeAudioError}
+              className="bg-gray-700/80 hover:bg-gray-600/80 text-white font-bold py-2 px-5 rounded-full text-sm transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center mx-auto"
+            >
+              {isWelcomeAudioLoading ? (
+                <>
+                  <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                  <span>آماده‌سازی پیام...</span>
+                </>
+              ) : isWelcomeAudioPlaying ? (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1zm4 0a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+                  <span>در حال پخش...</span>
+                </>
+              ) : (
+                 <>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" /></svg>
+                  <span>پیام خوش‌آمدگویی</span>
+                 </>
+              )}
+            </button>
+            {welcomeAudioError && <p className="text-red-400 text-xs mt-2">{welcomeAudioError}</p>}
+          </div>
         </div>
 
         <div className="mb-8 w-full aspect-video bg-gray-800 rounded-3xl overflow-hidden border-2 border-gray-700 shadow-2xl">
@@ -114,9 +231,16 @@ const SimulationView: React.FC<SimulationViewProps> = ({ planet, data, onStartCh
             </button>
             <button
               onClick={() => setIsSouvenirModalOpen(true)}
-              className="bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600 text-white font-bold py-4 px-8 rounded-full text-xl transition-all duration-300 transform hover:scale-105"
+              className="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold py-4 px-8 rounded-full text-xl transition-all duration-300 transform hover:scale-105"
             >
               عکس فضایی بگیر
+            </button>
+             <button
+              onClick={handleGenerateStory}
+              disabled={isStoryLoading}
+              className="bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-white font-bold py-4 px-8 rounded-full text-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+               {isStoryLoading ? 'در حال نوشتن...' : 'داستان ماجراجویی من'}
             </button>
           </div>
         </div>

@@ -65,13 +65,15 @@ const ChatView: React.FC<ChatViewProps> = ({ planet, simulationData, chatTarget,
     if (input.trim() === '' || isLoading) return;
 
     const imageSubject = input;
+    // The history is the `messages` state *before* adding the new user message.
+    const history = [...messages]; 
     const userMessage: ChatMessage = { role: 'user', text: `یک عکس از این بکش: ${imageSubject}` };
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
 
     try {
-        const prompt = await createImageGenerationPrompt(imageSubject);
+        const prompt = await createImageGenerationPrompt(imageSubject, history);
         const imageUrl = `https://pollinations.ai/p/${encodeURIComponent(prompt)}`;
         const imageMessage: ChatMessage = { role: 'model', imageUrl: imageUrl };
         setMessages(prev => [...prev, imageMessage]);

@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type, Chat, Modality } from "@google/genai";
-import type { SimulationData, ChatMessage, ChatTarget, PlanetAnalysisData } from '../types';
+import type { SimulationData, ChatMessage, ChatTarget, PlanetAnalysisData, Planet } from '../types';
 
 if (!process.env.API_KEY) {
     throw new Error("API_KEY environment variable not set");
@@ -100,13 +100,26 @@ export async function generatePlanetAnalysis(planetDescription: string): Promise
   }
 }
 
-export async function createImageGenerationPrompt(subject: string): Promise<string> {
+export async function createImageGenerationPrompt(subject: string, history: ChatMessage[]): Promise<string> {
     try {
+        const historyText = history
+            .filter(msg => msg.text) // Only include messages with text, not previous images
+            .slice(-6) // Take last 6 messages for context
+            .map(msg => `${msg.role === 'user' ? 'کاربر' : 'دستیار'}: ${msg.text}`)
+            .join('\n');
+
+        const prompt = `
+سابقه گفتگو:
+${historyText}
+
+کاربر الان می‌خواهد بر اساس این درخواست یک تصویر بسازد: "${subject}"
+`;
+
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
-            contents: `Subject: "${subject}"`,
+            contents: prompt,
             config: {
-                systemInstruction: "You are an expert prompt engineer for a text-to-image AI model. Your task is to create a detailed, visually rich, and artistic prompt in English based on the user's subject. The prompt should be a single continuous string of descriptive keywords and phrases, separated by commas. Focus on style, lighting, composition, and specific details. Do not add any conversational text or explanations. Only output the prompt itself."
+                systemInstruction: "You are an expert prompt engineer for a text-to-image AI model. Based on the provided conversation history and the final user request, your task is to create a single, detailed, visually rich, and artistic prompt in English. The prompt must be a single continuous string of descriptive keywords and phrases, separated by commas, that captures the user's intent from the conversation. Focus on style, lighting, composition, and specific visual details. Do not add any conversational text, explanations, or labels like 'Prompt:'. Only output the prompt string itself."
             }
         });
         return response.text.trim();
@@ -164,6 +177,62 @@ export async function generateSouvenirPhoto(base64ImageData: string, planetName:
     }
 }
 
+export async function generateAdventureStory(planet: Planet, simulationData: SimulationData): Promise<string> {
+    try {
+        const prompt = `
+        شما یک نویسنده داستان‌های کودک بسیار خلاق و شاد هستید.
+        یک داستان کوتاه (حدود 200 کلمه)، مثبت و هیجان‌انگیز برای یک کودک بنویسید که به سیاره "${planet.name}" سفر کرده است.
+        
+        این اطلاعات را در داستان خود بگنجان:
+        - نام شهر: "${simulationData.cityName}"
+        - حال و هوای کلی شهر: "${simulationData.cityOverview}"
+        - سبک زندگی مردم: "${simulationData.lifestyle}"
+        
+        داستان باید یک ماجراجویی کوچک و جالب را روایت کند که در آن کودک با یکی از جنبه‌های شگفت‌انگیز شهر یا سیاره روبرو می‌شود. داستان را با پایانی شاد و الهام‌بخش به اتمام برسان. لحن داستان باید بسیار ساده، دوستانه و مناسب برای کودکان باشد.
+        `;
+
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+            config: {
+                temperature: 0.85,
+            }
+        });
+        return response.text.trim();
+    } catch (error) {
+        console.error("Error generating adventure story:", error);
+        throw new Error("Failed to generate adventure story from AI.");
+    }
+}
+
+export async function generateAudio(text: string): Promise<string> {
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash-preview-tts",
+            contents: [{ parts: [{ text }] }],
+            config: {
+                responseModalities: [Modality.AUDIO],
+                speechConfig: {
+                    voiceConfig: {
+                      prebuiltVoiceConfig: { voiceName: 'Kore' }, // A warm voice, good for storytelling
+                    },
+                },
+            },
+        });
+        
+        const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+        if (base64Audio) {
+            return base64Audio;
+        }
+        throw new Error("AI did not return audio data.");
+
+    } catch (error) {
+        console.error("Error generating audio:", error);
+        throw new Error("Failed to generate audio from AI.");
+    }
+}
+
+
 let chatInstance: Chat | null = null;
 
 export function startChatSession(planetName: string, cityName: string, chatTarget: ChatTarget): Chat {
@@ -190,7 +259,25 @@ export function startChatSession(planetName: string, cityName: string, chatTarge
             systemInstruction = `تو شهردار مهربون شهر "${cityName}" در سیاره "${planetName}" هستی. تو به بچه‌ها میگی که چطوری همه با هم در صلح و شادی زندگی می‌کنن و قوانین چطور به همه کمک می‌کنه. ${conversationalPrompt}`;
             break;
         case 'فضانورد':
-            systemInstruction = `تو یک فضانورد شجاع و ماجراجو هستی که به همه جا سفر کرده! تو در "${cityName}" هستی و داستان‌های هیجان‌انگیز سفر به ستاره‌ها و سیاره‌های مختلف رو برای بچه‌ها تعریف می‌کنی. هدف تو اینه که بچه‌ها رو به فضا و علم علاقه‌مند کنی. ${conversationalPrompt}`;
+            systemInstruction = `
+شما کاپیتان کیان، یک فضانورد شجاع و ماجراجو هستید. شخصیت شما کاملاً ثابت است.
+
+**داستان پس‌زمینه شما:**
+- **نام:** کاپیتان کیان
+- **شخصیت:** شجاع، خوش‌بین، شوخ‌طبع، بی‌نهایت کنجکاو و عاشق فضا. شما از توضیح مفاهیم پیچیده به زبان ساده و هیجان‌انگیز لذت می‌برید و در همه چیز شگفتی می‌بینید.
+- **سفینه فضایی:** شما فرمانده سفینه اکتشافی "کاوش-۱" هستید، یک سفینه زیبا که با انرژی خورشیدی کار می‌کند.
+- **همکار هوش مصنوعی:** شما یک همکار هوش مصنوعی به نام "دانا" دارید که گاهی اوقات در مکالمات به او اشاره می‌کنید (مثلاً: "دانا میگه داریم به یک سحابی نزدیک میشیم!").
+- **ماموریت فعلی:** شما در حال نقشه‌برداری از بخش ناشناخته‌ای از کهکشان به نام "بخش ادیب" هستید که به پدیده‌های کیهانی عجیب و زیبایش معروف است.
+- **خاطره ویژه:** خاطره مورد علاقه شما برای تعریف کردن، مربوط به زمانی است که روی سیاره "شب‌تاب-۷" فرود آمدید و جنگل‌هایی از قارچ‌های غول‌پیکر و درخشان را کشف کردید و با موجودات کوچک و پشمالویی به نام "فوفولوها" دوست شدید که با تغییر رنگ با شما حرف می‌زدند.
+- **هدف اصلی:** هدف شما صحبت با کودکان روی زمین و الهام بخشیدن به آنها برای تبدیل شدن به نسل بعدی دانشمندان، مهندسان و کاشفان است.
+
+**قوانین گفتگو:**
+- همیشه در نقش کاپیتان کیان باقی بمانید.
+- با بچه‌ها حرف می‌زنید پس خیلی ساده، شاد و دوستانه صحبت کنید. جواب‌هایتان کوتاه و هیجان‌انگیز باشد.
+- از داستان پس‌زمینه خود (سفینه کاوش-۱، هوش مصنوعی دانا، سیاره شب‌تاب-۷ و فوفولوها) در جواب‌هایتان استفاده کنید تا شخصیت شما واقعی به نظر برسد.
+- همیشه مکالمات را با یک پیام مثبت و الهام‌بخش تمام کنید (مثلاً: "یادت باشه، ستاره‌ها منتظر تو هستن!").
+- از کلمه‌های سخت استفاده نکنید. می‌توانید از شکلک‌های متنی مثل :) یا :D هم استفاده کنید.
+`;
             break;
     }
 
